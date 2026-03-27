@@ -16,8 +16,11 @@ class Vectorizer(nn.Module):
         self.linear_layer_dim = linear_layer_dim.copy()
         self.use_matrix_multiplication  = use_matrix_multiplication
 
-        
-        self.linear_layer_dim.append(self.number_of_vectors)
+        if  self.use_matrix_multiplication:
+            self.linear_layer_dim.append(self.number_of_vectors)
+            self.vectors = nn.Parameter(torch.randn(self.number_of_vectors, self.vector_dim))
+        else:
+            self.linear_layer_dim.append(self.vector_dim)
 
         linear_layer =nn.ModuleList([nn.Flatten()])
         linear_layer.append(nn.Linear(self.in_neuroes,self.linear_layer_dim[0]))
@@ -28,11 +31,10 @@ class Vectorizer(nn.Module):
             linear_layer.append(nn.ReLU(inplace=True))
             linear_layer.append(nn.Linear(self.linear_layer_dim[i], self.linear_layer_dim[i+1]))
 
-        
+       
         
         self.linear = nn.Sequential(*linear_layer)
 
-        self.vectors = nn.Parameter(torch.randn(self.number_of_vectors, self.vector_dim))
 
     def forward(self, x):
         batch_size= x.size(0)

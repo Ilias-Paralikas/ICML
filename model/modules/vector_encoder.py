@@ -8,7 +8,7 @@ class VectorEncoder(nn.Module):
                  norm=nn.BatchNorm2d,
                  channels= [32, 64, 128, 256, 512, 1024],
                  bottleneck_dim=128,
-                 number_of_vectorizers=2,
+                    vectorizers_mat_mul= [True,True],
                  vectorizer_linear_layer_dim=[1024],
                  number_of_vectors=4,
                  input_size=(256,256),
@@ -17,9 +17,9 @@ class VectorEncoder(nn.Module):
         
         self.in_channels = in_channels
         self.channels = channels.copy()
+        self.vectorizers_mat_mul=  vectorizers_mat_mul.copy()
         self.save_path = save_path
         self.number_of_vectors=  number_of_vectors
-        self.number_of_vectorizers =  number_of_vectorizers
         self.bottleneck_dim =bottleneck_dim
         self.vectorizer_linear_layer_dim= vectorizer_linear_layer_dim
         self.norm = norm
@@ -48,9 +48,9 @@ class VectorEncoder(nn.Module):
         self.vectorizers = nn.ModuleList([Vectorizer( in_neuroes=flat_enc_output,
                                                     vector_dim= self.bottleneck_dim,
                                                     number_of_vectors=self.number_of_vectors,
-                                                    linear_layer_dim=self.vectorizer_linear_layer_dim)
-                                                     for _ in range(self.number_of_vectorizers)])
-
+                                                    linear_layer_dim=self.vectorizer_linear_layer_dim,
+                                                     use_matrix_multiplication = mat_mul)
+                                                     for mat_mul in self.vectorizers_mat_mul])
 
      
      
