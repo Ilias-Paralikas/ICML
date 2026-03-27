@@ -1,0 +1,9 @@
+data_handlers/
+**/*cache*/
+
+__pycache__/
+**/__pycache__/
+
+# Ignore compiled Python files
+*.pyc
+*.pt
