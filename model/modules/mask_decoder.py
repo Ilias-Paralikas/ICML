@@ -39,7 +39,6 @@ class MaskDecoder(nn.Module):
                                      padding=0))
         self.decoder = nn.Sequential(*dec_layers)
         self.sigmoid_layer = nn.Sigmoid()
-        self.softmax_layer = nn.Softmax(dim=1)
     def forward(self, x):
        
         x = torch.cat(x, dim=1)
@@ -55,5 +54,4 @@ class MaskDecoder(nn.Module):
             reconstruction  =x[:,:,:-1]
         reconstruction= self.sigmoid_layer(reconstruction)
         segmentation= x[:,:,-1]
-        segmentation = self.softmax_layer(segmentation)
         return reconstruction, segmentation
