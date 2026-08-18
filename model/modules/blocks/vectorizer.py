@@ -5,22 +5,22 @@ import torch
 class Vectorizer(nn.Module):
     def __init__(self,
                  in_neuroes,
-                 vector_dim,
+                 bottleneck_dim,
                  number_of_vectors,
                  use_matrix_multiplication=True,
                 linear_layer_dim=[]):
         super().__init__()
         self.in_neuroes = in_neuroes
-        self.vector_dim = vector_dim
+        self.bottleneck_dim = bottleneck_dim
         self.number_of_vectors = number_of_vectors
         self.linear_layer_dim = linear_layer_dim.copy()
         self.use_matrix_multiplication  = use_matrix_multiplication
 
         if  self.use_matrix_multiplication:
             self.linear_layer_dim.append(self.number_of_vectors)
-            self.vectors = nn.Parameter(torch.randn(self.number_of_vectors, self.vector_dim))
+            self.vectors = nn.Parameter(torch.randn(self.number_of_vectors, self.bottleneck_dim))
         else:
-            self.linear_layer_dim.append(self.vector_dim)
+            self.linear_layer_dim.append(self.bottleneck_dim)
 
         linear_layer =nn.ModuleList([nn.Flatten()])
         linear_layer.append(nn.Linear(self.in_neuroes,self.linear_layer_dim[0]))

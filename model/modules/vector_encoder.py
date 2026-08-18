@@ -46,7 +46,7 @@ class VectorEncoder(nn.Module):
             flat_enc_output = nn.Flatten()(encoder_output).shape[1]
      
         self.vectorizers = nn.ModuleList([Vectorizer( in_neuroes=flat_enc_output,
-                                                    vector_dim= self.bottleneck_dim,
+                                                    bottleneck_dim= self.bottleneck_dim,
                                                     number_of_vectors=self.number_of_vectors,
                                                     linear_layer_dim=self.vectorizer_linear_layer_dim,
                                                      use_matrix_multiplication = mat_mul)
