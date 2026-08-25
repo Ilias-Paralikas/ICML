@@ -1,0 +1,6 @@
+{
+    "root": "../../data/Camus/preprocessed_data",
+    "views": ["4CH"],
+    "frames": ["ED", "ES", "half"],
+    "train_channels": [0, 1, 3]
+}

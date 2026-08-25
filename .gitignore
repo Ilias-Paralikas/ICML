@@ -1,4 +1,4 @@
-data_handlers/
+data_handlers/data/
 **/*cache*/
 
 __pycache__/

@@ -1,0 +1,6 @@
+{
+    "train_root": "../../data/CardiacUDA/sliced_data/train",
+    "test_root": "../../data/CardiacUDA/test",
+    "train_channels": [0, 3, 4],
+    "sites": ["Site_G_20", "Site_G_29", "Site_G_100"]
+}
