@@ -1,0 +1,19 @@
+# Runtime dependencies for the ICLR unsupervised-segmentation code.
+# Pinned to the versions this project is developed/run against.
+#
+# torch / torchvision are the CUDA 12.1 builds in the dev environment. Install the
+# build that matches your own CUDA/CPU setup, e.g.:
+#   pip install torch==2.4.1 torchvision==0.19.1 --index-url https://download.pytorch.org/whl/cu121
+# then `pip install -r requirements.txt` for the rest.
+
+torch==2.4.1
+torchvision==0.19.1
+numpy==1.24.4
+Pillow==10.4.0
+scikit-image==0.19.3
+matplotlib==3.7.5
+tqdm==4.67.1
+
+# Needed only to run the training/experiment notebooks under train/.
+notebook==6.1.5
+ipykernel==6.29.5

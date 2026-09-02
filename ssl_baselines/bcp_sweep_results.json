@@ -1,0 +1,414 @@
+[
+  {
+    "dataset": "chaos_ct",
+    "method": "bcp",
+    "labeled_fraction": 0.01,
+    "seed": 42,
+    "selection_metric": "dice_mean_all_classes",
+    "test_dice_per_class": [
+      0.9976593255996704,
+      0.9188759922981262
+    ],
+    "test_iou_per_class": [
+      0.9953396916389465,
+      0.8908103108406067
+    ],
+    "test_hd_per_class": [
+      6.874533176422119,
+      23.586349487304688
+    ],
+    "test_dice_all_mean": 0.9582676887512207,
+    "test_iou_all_mean": 0.9430750012397766,
+    "test_dice_fg_mean": 0.9188759922981262,
+    "test_iou_fg_mean": 0.8908103108406067,
+    "run_dir": "cache/model_weights/ssl_baselines/chaos_ct/bcp/lf0.01_seed42/1",
+    "_mtime": 1788206709.626799
+  },
+  {
+    "dataset": "chaos_ct",
+    "method": "bcp",
+    "labeled_fraction": 0.05,
+    "seed": 42,
+    "selection_metric": "dice_mean_all_classes",
+    "test_dice_per_class": [
+      0.9978541135787964,
+      0.9313768148422241
+    ],
+    "test_iou_per_class": [
+      0.995726466178894,
+      0.9029636383056641
+    ],
+    "test_hd_per_class": [
+      6.428957939147949,
+      18.551963806152344
+    ],
+    "test_dice_all_mean": 0.9646154642105103,
+    "test_iou_all_mean": 0.949345052242279,
+    "test_dice_fg_mean": 0.9313768148422241,
+    "test_iou_fg_mean": 0.9029636383056641,
+    "run_dir": "cache/model_weights/ssl_baselines/chaos_ct/bcp/lf0.05_seed42/1",
+    "_mtime": 1788204242.796511
+  },
+  {
+    "dataset": "chaos_ct",
+    "method": "bcp",
+    "labeled_fraction": 0.1,
+    "seed": 42,
+    "selection_metric": "dice_mean_all_classes",
+    "test_dice_per_class": [
+      0.9981752634048462,
+      0.9564984440803528
+    ],
+    "test_iou_per_class": [
+      0.9963637590408325,
+      0.9310976266860962
+    ],
+    "test_hd_per_class": [
+      4.392679691314697,
+      10.09520149230957
+    ],
+    "test_dice_all_mean": 0.9773368835449219,
+    "test_iou_all_mean": 0.9637306928634644,
+    "test_dice_fg_mean": 0.9564984440803528,
+    "test_iou_fg_mean": 0.9310976266860962,
+    "run_dir": "cache/model_weights/ssl_baselines/chaos_ct/bcp/lf0.1_seed42/1",
+    "_mtime": 1788201794.0819914
+  },
+  {
+    "dataset": "chaos_ct",
+    "method": "bcp",
+    "labeled_fraction": 0.2,
+    "seed": 42,
+    "selection_metric": "dice_mean_all_classes",
+    "test_dice_per_class": [
+      0.9978358149528503,
+      0.92863929271698
+    ],
+    "test_iou_per_class": [
+      0.9956910014152527,
+      0.900417685508728
+    ],
+    "test_hd_per_class": [
+      7.190412998199463,
+      18.33284568786621
+    ],
+    "test_dice_all_mean": 0.9632375240325928,
+    "test_iou_all_mean": 0.948054313659668,
+    "test_dice_fg_mean": 0.92863929271698,
+    "test_iou_fg_mean": 0.900417685508728,
+    "run_dir": "cache/model_weights/ssl_baselines/chaos_ct/bcp/lf0.2_seed42/1",
+    "_mtime": 1788219845.595316
+  },
+  {
+    "dataset": "drishtigs",
+    "method": "bcp",
+    "labeled_fraction": 0.01,
+    "seed": 42,
+    "selection_metric": "dice_mean_all_classes",
+    "test_dice_per_class": [
+      0.9162259697914124,
+      0.387384295463562,
+      0.495121031999588
+    ],
+    "test_iou_per_class": [
+      0.8515875935554504,
+      0.2713278532028198,
+      0.3903917670249939
+    ],
+    "test_hd_per_class": [
+      46.7289924621582,
+      55.85731506347656,
+      81.74119567871094
+    ],
+    "test_dice_all_mean": 0.5995771288871765,
+    "test_iou_all_mean": 0.5044357776641846,
+    "test_dice_fg_mean": 0.4412526488304138,
+    "test_iou_fg_mean": 0.33085981011390686,
+    "run_dir": "cache/model_weights/ssl_baselines/drishtigs/bcp/lf0.01_seed42/1",
+    "_mtime": 1788212459.7297928
+  },
+  {
+    "dataset": "drishtigs",
+    "method": "bcp",
+    "labeled_fraction": 0.05,
+    "seed": 42,
+    "selection_metric": "dice_mean_all_classes",
+    "test_dice_per_class": [
+      0.9448316693305969,
+      0.557462215423584,
+      0.6832125186920166
+    ],
+    "test_iou_per_class": [
+      0.8964493274688721,
+      0.3949885368347168,
+      0.5470136404037476
+    ],
+    "test_hd_per_class": [
+      52.30195617675781,
+      46.26200485229492,
+      39.37147521972656
+    ],
+    "test_dice_all_mean": 0.728502094745636,
+    "test_iou_all_mean": 0.6128171682357788,
+    "test_dice_fg_mean": 0.6203373670578003,
+    "test_iou_fg_mean": 0.4710010886192322,
+    "run_dir": "cache/model_weights/ssl_baselines/drishtigs/bcp/lf0.05_seed42/1",
+    "_mtime": 1788210517.8123345
+  },
+  {
+    "dataset": "drishtigs",
+    "method": "bcp",
+    "labeled_fraction": 0.1,
+    "seed": 42,
+    "selection_metric": "dice_mean_all_classes",
+    "test_dice_per_class": [
+      0.9793441891670227,
+      0.7167993783950806,
+      0.7890284657478333
+    ],
+    "test_iou_per_class": [
+      0.9599692821502686,
+      0.567288875579834,
+      0.6652536988258362
+    ],
+    "test_hd_per_class": [
+      23.76658821105957,
+      35.738182067871094,
+      24.205957412719727
+    ],
+    "test_dice_all_mean": 0.8283906579017639,
+    "test_iou_all_mean": 0.7308372855186462,
+    "test_dice_fg_mean": 0.7529139518737793,
+    "test_iou_fg_mean": 0.6162712574005127,
+    "run_dir": "cache/model_weights/ssl_baselines/drishtigs/bcp/lf0.1_seed42/1",
+    "_mtime": 1788208589.2572317
+  },
+  {
+    "dataset": "drishtigs",
+    "method": "bcp",
+    "labeled_fraction": 0.2,
+    "seed": 42,
+    "selection_metric": "dice_mean_all_classes",
+    "test_dice_per_class": [
+      0.9774667620658875,
+      0.7661436796188354,
+      0.8393285274505615
+    ],
+    "test_iou_per_class": [
+      0.9564955830574036,
+      0.631806492805481,
+      0.7343533039093018
+    ],
+    "test_hd_per_class": [
+      14.147521018981934,
+      25.035369873046875,
+      30.69281768798828
+    ],
+    "test_dice_all_mean": 0.8609796166419983,
+    "test_iou_all_mean": 0.7742184996604919,
+    "test_dice_fg_mean": 0.8027361035346985,
+    "test_iou_fg_mean": 0.6830798983573914,
+    "run_dir": "cache/model_weights/ssl_baselines/drishtigs/bcp/lf0.2_seed42/1",
+    "_mtime": 1788222326.4084964
+  },
+  {
+    "dataset": "isic2017",
+    "method": "bcp",
+    "labeled_fraction": 0.1,
+    "seed": 42,
+    "selection_metric": "dice_mean_all_classes",
+    "test_dice_per_class": [
+      0.923551082611084,
+      0.7861335277557373
+    ],
+    "test_iou_per_class": [
+      0.876437246799469,
+      0.6865451335906982
+    ],
+    "test_hd_per_class": [
+      29.537033081054688,
+      41.420875549316406
+    ],
+    "test_dice_all_mean": 0.8548423051834106,
+    "test_iou_all_mean": 0.7814911603927612,
+    "test_dice_fg_mean": 0.7861335277557373,
+    "test_iou_fg_mean": 0.6865451335906982,
+    "run_dir": "cache/model_weights/ssl_baselines/isic2017/bcp/lf0.1_seed42/1",
+    "_mtime": 1788224934.3806045
+  },
+  {
+    "dataset": "isic2017",
+    "method": "bcp",
+    "labeled_fraction": 0.05,
+    "seed": 42,
+    "selection_metric": "dice_mean_all_classes",
+    "test_dice_per_class": [
+      0.9223145842552185,
+      0.7855148315429688
+    ],
+    "test_iou_per_class": [
+      0.8738840222358704,
+      0.6872739791870117
+    ],
+    "test_hd_per_class": [
+      29.004695892333984,
+      40.94842529296875
+    ],
+    "test_dice_all_mean": 0.853914737701416,
+    "test_iou_all_mean": 0.7805789709091187,
+    "test_dice_fg_mean": 0.7855148315429688,
+    "test_iou_fg_mean": 0.6872739791870117,
+    "run_dir": "cache/model_weights/ssl_baselines/isic2017/bcp/lf0.05_seed42/1",
+    "_mtime": 1788227471.4089787
+  },
+  {
+    "dataset": "isic2017",
+    "method": "bcp",
+    "labeled_fraction": 0.01,
+    "seed": 42,
+    "selection_metric": "dice_mean_all_classes",
+    "test_dice_per_class": [
+      0.9086329936981201,
+      0.7186911702156067
+    ],
+    "test_iou_per_class": [
+      0.8560726642608643,
+      0.6105257868766785
+    ],
+    "test_hd_per_class": [
+      34.989627838134766,
+      53.22547149658203
+    ],
+    "test_dice_all_mean": 0.813662052154541,
+    "test_iou_all_mean": 0.7332992553710938,
+    "test_dice_fg_mean": 0.7186911702156067,
+    "test_iou_fg_mean": 0.6105257868766785,
+    "run_dir": "cache/model_weights/ssl_baselines/isic2017/bcp/lf0.01_seed42/1",
+    "_mtime": 1788230007.623437
+  },
+  {
+    "dataset": "isic2017",
+    "method": "bcp",
+    "labeled_fraction": 0.2,
+    "seed": 42,
+    "selection_metric": "dice_mean_all_classes",
+    "test_dice_per_class": [
+      0.9255366921424866,
+      0.8030834197998047
+    ],
+    "test_iou_per_class": [
+      0.8808750510215759,
+      0.7077684998512268
+    ],
+    "test_hd_per_class": [
+      27.175457000732422,
+      34.49484634399414
+    ],
+    "test_dice_all_mean": 0.8643100261688232,
+    "test_iou_all_mean": 0.7943217754364014,
+    "test_dice_fg_mean": 0.8030834197998047,
+    "test_iou_fg_mean": 0.7077684998512268,
+    "run_dir": "cache/model_weights/ssl_baselines/isic2017/bcp/lf0.2_seed42/1",
+    "_mtime": 1788215124.5377421
+  },
+  {
+    "dataset": "montgomery",
+    "method": "bcp",
+    "labeled_fraction": 0.1,
+    "seed": 42,
+    "selection_metric": "dice_mean_all_classes",
+    "test_dice_per_class": [
+      0.9896156787872314,
+      0.9707301259040833
+    ],
+    "test_iou_per_class": [
+      0.9795159101486206,
+      0.9434593319892883
+    ],
+    "test_hd_per_class": [
+      9.578314781188965,
+      22.858062744140625
+    ],
+    "test_dice_all_mean": 0.980172872543335,
+    "test_iou_all_mean": 0.9614876508712769,
+    "test_dice_fg_mean": 0.9707301259040833,
+    "test_iou_fg_mean": 0.9434593319892883,
+    "run_dir": "cache/model_weights/ssl_baselines/montgomery/bcp/lf0.1_seed42/1",
+    "_mtime": 1788232120.3284843
+  },
+  {
+    "dataset": "montgomery",
+    "method": "bcp",
+    "labeled_fraction": 0.01,
+    "seed": 42,
+    "selection_metric": "dice_mean_all_classes",
+    "test_dice_per_class": [
+      0.9803035855293274,
+      0.9446131587028503
+    ],
+    "test_iou_per_class": [
+      0.9616668820381165,
+      0.8977758884429932
+    ],
+    "test_hd_per_class": [
+      17.88239288330078,
+      39.00404739379883
+    ],
+    "test_dice_all_mean": 0.9624583721160889,
+    "test_iou_all_mean": 0.9297213554382324,
+    "test_dice_fg_mean": 0.9446131587028503,
+    "test_iou_fg_mean": 0.8977758884429932,
+    "run_dir": "cache/model_weights/ssl_baselines/montgomery/bcp/lf0.01_seed42/1",
+    "_mtime": 1788199315.8277547
+  },
+  {
+    "dataset": "montgomery",
+    "method": "bcp",
+    "labeled_fraction": 0.05,
+    "seed": 42,
+    "selection_metric": "dice_mean_all_classes",
+    "test_dice_per_class": [
+      0.9889414310455322,
+      0.9639866352081299
+    ],
+    "test_iou_per_class": [
+      0.9782016277313232,
+      0.9316205978393555
+    ],
+    "test_hd_per_class": [
+      11.063056945800781,
+      27.77120590209961
+    ],
+    "test_dice_all_mean": 0.976464033126831,
+    "test_iou_all_mean": 0.9549111127853394,
+    "test_dice_fg_mean": 0.9639866352081299,
+    "test_iou_fg_mean": 0.9316205978393555,
+    "run_dir": "cache/model_weights/ssl_baselines/montgomery/bcp/lf0.05_seed42/1",
+    "_mtime": 1788195898.085324
+  },
+  {
+    "dataset": "montgomery",
+    "method": "bcp",
+    "labeled_fraction": 0.2,
+    "seed": 42,
+    "selection_metric": "dice_mean_all_classes",
+    "test_dice_per_class": [
+      0.9935570955276489,
+      0.9810055494308472
+    ],
+    "test_iou_per_class": [
+      0.987207293510437,
+      0.9627723693847656
+    ],
+    "test_hd_per_class": [
+      5.277817726135254,
+      9.131872177124023
+    ],
+    "test_dice_all_mean": 0.987281322479248,
+    "test_iou_all_mean": 0.9749898314476013,
+    "test_dice_fg_mean": 0.9810055494308472,
+    "test_iou_fg_mean": 0.9627723693847656,
+    "run_dir": "cache/model_weights/ssl_baselines/montgomery/bcp/lf0.2_seed42/1",
+    "_mtime": 1788217357.653779
+  }
+]

@@ -1,0 +1,69 @@
+{
+  "dataset": "CHAOS - CT (liver segmentation, abdominal CT)",
+  "primary_metrics": ["Dice (%)", "ASSD / RAVD (challenge aux.)"],
+  "state_of_comparison": "There is NO established semi-supervised benchmark on CHAOS-CT (liver-only, CT). The CHAOS semi-supervised literature is almost entirely (a) on CHAOS-MR (T1/T2-SPIR), (b) multi-organ (liver + L/R kidney + spleen), and (c) framed as semi-supervised DOMAIN ADAPTATION (MR<->CT, target modality has ~20% labels). Pure from-scratch semi-supervised segmentation on CHAOS-CT liver is essentially unreported - people use LiTS for that. Options for the paper: switch this dataset to CHAOS-MR (4 organs, has a real semi-sup literature), or to LiTS (standard semi-sup liver CT benchmark), or keep CHAOS-CT as an 'also-evaluated' dataset with only the loose references below.",
+  "papers": [
+    {
+      "name": "Semi-supervised domain adaptation with scale-aware and global-local fusion for abdominal multi-organ segmentation",
+      "authors": "Han et al.",
+      "venue": "Journal of Applied Clinical Medical Physics 2025",
+      "link": "https://aapm.onlinelibrary.wiley.com/doi/full/10.1002/acm2.70008",
+      "supervision": "semi-supervised domain adaptation (source modality fully labeled; target = CHAOS-MR with 20% labels)",
+      "dataset_used": "CHAOS-MR (16 MRI volumes train / 4 test) as target; BTCV CT (24/6) as the other domain. 4 organs.",
+      "best_score_CHAOS_MR": {
+        "CT_to_MR_avg_DSC": 88.97,
+        "CT_to_MR_per_organ": {"liver": 86.09, "R_kidney": 88.73, "L_kidney": 90.88, "spleen": 90.16},
+        "MR_to_CT_avg_DSC": 88.95,
+        "MR_to_CT_per_organ": {"liver": 93.52, "R_kidney": 86.67, "L_kidney": 89.29, "spleen": 86.32}
+      },
+      "baselines_CT_to_MR_avg_DSC": {"supervised_only": 75.80, "CycleGAN": 83.07, "CyCADA": 84.08, "SE-MT": 85.09, "DSBN": 87.85, "CS-CADA": 88.25},
+      "note": "Closest thing to a CHAOS semi-supervised SOTA - but it is MULTI-ORGAN MR (target), 20% labeled, domain-adaptation. Not comparable to a from-scratch CT-liver-only semi-sup run. No liver-only CT number reported.",
+      "score_confidence": "verified from paper full-text"
+    },
+    {
+      "name": "Annotation-efficient / AIDE - annotation-efficient deep learning for medical image segmentation",
+      "authors": "Peng et al.",
+      "venue": "Nature Communications 2021 (arXiv 2012.04885)",
+      "link": "https://arxiv.org/abs/2012.04885",
+      "supervision": "semi-supervised (self-training / uncertainty), no domain adaptation",
+      "labeled_budget": "1 labeled case (~30 slices) vs 10 labeled cases (~331 slices)",
+      "best_score": {"Dice_10_cases": 70.1, "Dice_1_case": 87.9, "_ordering_note": "search summary gives 70.1 @ 1 case and 87.9 @ 10 cases"},
+      "note": "CHAOS-MR T2-SPIR, multi-organ (liver/kidneys/spleen), average DSC. Attributed to this paper by secondary sources; the arXiv abstract only mentions breast tumour, so CHAOS must be a secondary task in the full text.",
+      "score_confidence": "NOT verified - could not extract the CHAOS table from the PDF; treat as approximate"
+    },
+    {
+      "name": "SIFA - Synergistic Image and Feature Alignment",
+      "authors": "Chen et al.",
+      "venue": "IEEE TMI 2020",
+      "link": "https://arxiv.org/abs/2002.02255",
+      "supervision": "unsupervised domain adaptation (MR->CT, 0 CT labels)",
+      "best_score": {"note": "standard UDA baseline on CHAOS - verify liver Dice in paper"},
+      "score_confidence": "not extracted - read paper"
+    },
+    {
+      "name": "UDA for cross-modality liver segmentation via joint adversarial + self-learning",
+      "venue": "Applied Soft Computing 2022 (arXiv 2109.05664)",
+      "link": "https://arxiv.org/abs/2109.05664",
+      "supervision": "unsupervised domain adaptation (MR->CT, CHAOS)",
+      "best_score": {"Dice": "0.912 +/- 0.037 (CT liver, 0 CT labels)"},
+      "score_confidence": "from abstract"
+    },
+    {
+      "name": "HMeAL-UDA - histogram-matching-enhanced adversarial learning",
+      "venue": "Medical Physics 2025",
+      "link": "https://aapm.onlinelibrary.wiley.com/doi/10.1002/mp.17757",
+      "supervision": "unsupervised domain adaptation (MRI->CT)",
+      "best_score": {"Dice": "87.13 +/- 3.67 (CT liver, 0 CT labels)"},
+      "score_confidence": "from abstract"
+    },
+    {
+      "name": "CHAOS Challenge report - fully supervised reference / upper bound",
+      "authors": "Kavur et al.",
+      "venue": "Medical Image Analysis 2021",
+      "link": "https://arxiv.org/abs/2001.06535",
+      "supervision": "fully supervised (all labels)",
+      "best_score": {"Dice": "~0.97-0.98 (CT liver, nnU-Net-class top challenge entries)"},
+      "score_confidence": "context only - upper bound"
+    }
+  ]
+}

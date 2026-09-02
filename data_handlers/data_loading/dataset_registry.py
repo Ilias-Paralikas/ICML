@@ -19,11 +19,21 @@ unlabeled_loader, val_loader, test_loader, num_classes, in_channels`, where
 from .CardiacUDA.build_dataset import build_dataset as _build_cardiacuda, CONFIG_PATH as _cardiacuda_config_path
 from .Camus.build_dataset import build_dataset as _build_camus, CONFIG_PATH as _camus_config_path
 from .CelebAMaskHQ.build_dataset import build_dataset as _build_celebamaskhq, CONFIG_PATH as _celebamaskhq_config_path
+from .ISIC2017.build_dataset import build_dataset as _build_isic2017, CONFIG_PATH as _isic2017_config_path
+from .MontgomeryCXR.build_dataset import build_dataset as _build_montgomery, CONFIG_PATH as _montgomery_config_path
+from .CHAOS.build_dataset import build_dataset as _build_chaos_ct, CONFIG_PATH as _chaos_ct_config_path
+from .DrishtiGS.build_dataset import build_dataset as _build_drishtigs, CONFIG_PATH as _drishtigs_config_path
 
 DATASET_REGISTRY = {
     'cardiacUDA': _build_cardiacuda,
     'camus': _build_camus,
     'celebamaskhq': _build_celebamaskhq,
+    # non-echo datasets for the cross-modality / cross-organ generalisation study —
+    # all the plain "no anomaly" path (see npy_folder_build.py):
+    'isic2017': _build_isic2017,        # dermoscopy / skin lesion  (RGB, 2 cls)
+    'montgomery': _build_montgomery,    # chest X-ray / lung field  (gray, 2 cls)
+    'chaos_ct': _build_chaos_ct,        # abdominal CT / liver      (gray, 2 cls, sliced 3-D)
+    'drishtigs': _build_drishtigs,      # retinal fundus / disc+cup (RGB, 3 cls)
 }
 
 # The *live* dataset_config.json each dataset normally reads from — exposed so a
@@ -35,6 +45,10 @@ DATASET_CONFIG_PATHS = {
     'cardiacUDA': _cardiacuda_config_path,
     'camus': _camus_config_path,
     'celebamaskhq': _celebamaskhq_config_path,
+    'isic2017': _isic2017_config_path,
+    'montgomery': _montgomery_config_path,
+    'chaos_ct': _chaos_ct_config_path,
+    'drishtigs': _drishtigs_config_path,
 }
 
 

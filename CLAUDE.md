@@ -8,9 +8,12 @@ Research code for an ICLR submission on unsupervised/semi-supervised cardiac ult
 segmentation. The core idea: an autoencoder whose bottleneck is split into several
 independent "vectorizers" (one per class), each decoded separately into its own
 reconstruction + segmentation channel, so segmentation emerges from how well each
-per-class vector reconstructs the image. There is no build system, package config,
-linter, or test suite — this is notebook-driven experimentation (`train/*.ipynb`)
-backed by plain Python modules (`model/`, `data_handlers/`, `utils/`).
+per-class vector reconstructs the image. There is no build system, linter, or test
+suite (just a pinned `requirements.txt`) — this is notebook-driven experimentation
+(`train/*.ipynb`) backed by plain Python modules (`model/`, `data_handlers/`, `utils/`).
+The notebook is orchestration only; the losses, metrics, and eval loop it uses are
+importable modules under `utils/` (`utils/losses.py`, `utils/metrics.py`,
+`utils/evaluation.py`).
 
 The method's decoder learns a fixed spatial template per class (no encoder-decoder skip
 connections), so it only works on datasets with consistent object position/texture across
@@ -27,8 +30,9 @@ There are no CLI entry points — training happens by running notebook cells top
 - **Main training loop:** `train/train.ipynb`. It appends the repo root to
   `sys.path`, so it must be run with its working directory at `train/`. It is
   dataset-agnostic — set `DATASET_NAME` (in the "DATASET SELECTION" cell) to any key
-  registered in `dataset_registry.DATASET_REGISTRY` (currently `'cardiacUDA'`, `'camus'`,
-  or `'celebamaskhq'`); everything downstream (loaders, model, losses, eval) is generic
+  registered in `dataset_registry.DATASET_REGISTRY` (`'cardiacUDA'`, `'camus'`,
+  `'celebamaskhq'`, `'isic2017'`, `'montgomery'`, `'chaos_ct'`, `'drishtigs'`);
+  everything downstream (loaders, model, losses, eval) is generic
   and needs no further edits to switch datasets. The notebook never special-cases any
   dataset by name or introspects what a dataset did internally — the "Generic data
   loaders" cell just calls `build_dataset(DATASET_NAME, batch_size=...,
@@ -48,23 +52,34 @@ There are no CLI entry points — training happens by running notebook cells top
     reuses them) — because the dataset-config snapshot below needs `index_folder`
     to already exist by the time `build_dataset()` is called. A fresh run copies
     that dataset's live `dataset_config.json` (see `dataset_registry.get_dataset_config_path`)
-    into `index_folder/dataset_config.json` and passes that path to `build_dataset()`
-    as `dataset_config_path`; a resumed run passes the same saved path instead of
-    re-deriving it. So editing `train_channels`/`sites`/`same_site_test`/
-    `max_unlabeled_samples`/etc. in the live file never retroactively changes what an
-    already-started or already-resumed run means — `LOAD_RUN` reproduces the exact
-    dataset scenario the run began with, not whatever the live config says today.
-  - Dataset-independent experiment knobs (lr, `labeled_fraction`, `bottleneck_dim`,
-    `vectorizers_mat_mul`, aug params, loss weights) live in `train_config`;
-    dataset-derived values live in `dataset_config` — `batch_size`/`input_size` are set
+    into `index_folder/dataset_config.json`, **adds `labeled_fraction` and
+    `dataset_seed` to that snapshot** (they otherwise live only in the notebook's
+    `dataset_config` cell and aren't persisted anywhere), and passes that path to
+    `build_dataset()` as `dataset_config_path`; a resumed run reads the snapshot back —
+    the dataset config via `dataset_config_path`, and `labeled_fraction`/`dataset_seed`
+    restored into `dataset_config` in the Run-selection cell. So editing
+    `train_channels`/`sites`/`same_site_test`/`max_unlabeled_samples`/`labeled_fraction`/
+    `dataset_seed`/etc. in the live file or the `dataset_config` cell never
+    retroactively changes what an already-started or already-resumed run means —
+    `LOAD_RUN` reproduces the exact dataset scenario (including how much supervision)
+    the run began with, not whatever the live config says today.
+  - Model / optimisation knobs (lr, `bottleneck_dim`, `vectorizers_mat_mul`, aug
+    params, loss weights, warmup) live in `train_config`; the semi-supervised split
+    knobs (`labeled_fraction`, `dataset_seed`) and `batch_size`/`input_size` are set
     literally in the notebook's `dataset_config` cell, while `num_classes` and
     `in_channels` are left out of that cell on purpose and filled in from
     `build_dataset()`'s return in the "Generic data loaders" cell. `train_config` is
-    serialized to `config.json` next to the checkpoint (`dataset_config` is not — it's
-    reconstructed each run from the notebook + the dataset-config snapshot).
-  - `evaluate(loader, desc=..., compute_hd=True)` computes Dice (+ Hausdorff distance,
-    unless `compute_hd=False`) over any `(image, label)` loader — it doesn't hardcode which
-    dataset/split it's given. **Val vs. test discipline:** the per-epoch call inside the
+    serialized to `config.json` next to the checkpoint; `dataset_config` isn't
+    serialized wholesale, but `labeled_fraction` + `dataset_seed` are written into the
+    run's `dataset_config.json` snapshot (see above), so every run folder records the
+    supervision level it used.
+  - `evaluate(loader, desc=..., compute_hd=True)` computes Dice + IoU (+ Hausdorff
+    distance, unless `compute_hd=False`) over any `(image, label)` loader — it doesn't
+    hardcode which dataset/split it's given. The measuring part lives in
+    `utils/evaluation.py` (pure: takes `model`/`device`/`num_classes` explicitly); the
+    notebook's `evaluate(...)` is a thin wrapper that adds the best-checkpoint
+    bookkeeping via `store_checkpoints=True` (val-role only). **Val vs. test
+    discipline:** the per-epoch call inside the
     training loop evaluates on `val_loader` so test stays completely unseen during
     development; the final evaluation cell runs `evaluate(test_loader)` once, at the end.
     HD's per-sample skimage loop is much slower than Dice — if per-epoch val evaluation
@@ -91,20 +106,23 @@ There are no CLI entry points — training happens by running notebook cells top
   `vectorizers_mat_mul` config knob, applied per-vectorizer.
 - `MaskDecoder` takes the list of per-class vectors, concatenates and reshapes them so
   every vector is decoded independently through the same transposed-conv decoder stack
-  (batch and vector dims are folded together, then split back apart). The last decoder
-  channel is treated as a segmentation logit, the rest as a (sigmoided) reconstruction —
-  see the `x.shape[2] == 2` branch in `MaskDecoder.forward` for the 1-vs-multi-channel
-  reconstruction split.
+  (batch and vector dims are folded together, then split back apart). The decoder is
+  built with `out_channels = in_channels + 1`: the last channel is the segmentation
+  logit, the rest are the (sigmoided) reconstruction — see the
+  `recon_channels = self.out_channels - 1` branch in `MaskDecoder.forward`, which
+  collapses the channel axis for single-channel (grayscale) reconstructions and keeps
+  it for multi-channel (RGB).
 - Training combines the per-class reconstructions using the per-class segmentation
-  probabilities as soft masks (`reconstruction_loss` in the training notebook), plus a
-  supervised dice/CE loss on labeled samples — this is what ties unsupervised
-  reconstruction quality to segmentation quality.
+  probabilities as soft masks (`reconstruction_loss` in `utils/losses.py`), plus a
+  supervised dice/CE loss on labeled samples (`segmentation_loss`, same module) — this
+  is what ties unsupervised reconstruction quality to segmentation quality.
 - Conv building blocks (`ConvBlock`, `DownConv`, `UpConv`, `ResidualDoubleConv`) live in
   `model/modules/blocks/`.
 
 **Data** (`data_handlers/`):
-- `data_loading/dataset_registry.py` maps a dataset name (`'cardiacUDA'`, `'camus'`, or
-  `'celebamaskhq'`) to a `build_dataset(batch_size, labeled_fraction, seed,
+- `data_loading/dataset_registry.py` maps a dataset name (`'cardiacUDA'`, `'camus'`,
+  `'celebamaskhq'`, `'isic2017'`, `'montgomery'`, `'chaos_ct'`, `'drishtigs'`) to a
+  `build_dataset(batch_size, labeled_fraction, seed,
   eval_batch_size=16, dataset_config_path=None)` function that returns fully-built
   `(labeled_loader, unlabeled_loader, val_loader, test_loader, num_classes, in_channels)`
   — `val_loader` may be `None` if that dataset has no validation split (or, for
@@ -187,24 +205,60 @@ There are no CLI entry points — training happens by running notebook cells top
   identical to Camus (fully labeled, on-disk split, no CardiacUDA-style anomaly). The one
   thing that makes it different from every other dataset here: it's **RGB**, so
   `build_dataset()` returns `in_channels=3` (constant for this dataset) and images come
-  back as `(3, H, W)`. Preprocessing (`CelebAMaskHQ/preprocess/preprocess_celebamaskhq.py`,
-  run once) turns the official CelebAMask-HQ release into
-  `data/CelebAMaskHQ/preprocessed_data/{train,val,test}/{idx:05d}/{image.npy,label.npy}`:
+  back as `(3, H, W)`. Preprocessing (`CelebAMaskHQ/preprocess/preprocess_celebamaskhq.py`)
+  turns the official CelebAMask-HQ release into
+  `data/CelebAMaskHQ/preprocessed_data_<scheme>/{train,val,test}/{idx:05d}/{image.npy,label.npy}`:
   `image.npy` is `float32 (256,256,3)` HWC in `[0,1]` (scaled to match the ultrasound
   datasets' range — the model's reconstruction head is sigmoid), `label.npy` is
-  `uint8 (8,256,256)` one-hot. The 8 raw classes are a hand-picked consolidation of
-  CelebAMask-HQ's 18 attributes: `0 background, 1 skin, 2 eyebrows, 3 eyes, 4 ears,
-  5 nose, 6 mouth, 7 hair` — accessories/neck/cloth are folded into background because
-  they sit off the landmark-aligned face region. The raw attribute masks overlap at
-  boundaries, so `build_label()` resolves each pixel to one class via a fixed priority
-  order (broad classes first, precise features win) to keep the one-hot invariant.
-  `train_channels` (e.g. `[0, 1, 6, 7]`) works exactly like the other datasets — same
-  `label_utils.remap_sample`, applied in `CelebAMaskHQDataset.__getitem__`; `num_classes`
-  = `len(train_channels)`. The split is CelebA's official train/val/test partition
+  `uint8 (C,256,256)` one-hot with `channel 0 = background`. **`C` and the per-channel
+  meaning depend on the chosen *label scheme*** — `SCHEMES` in the preprocess script is a
+  dict of named, explicit maps from CelebAMask-HQ's 18 raw (overlapping) attribute masks
+  to output classes; each output class lists exactly which raw attrs are OR'd into it and
+  anything unlisted falls through to background, so every merge is deliberate and the
+  script prints the fully resolved mapping (background included) before running. Two are
+  defined: `full8` — the original `0 bg, 1 skin, 2 eyebrows, 3 eyes, 4 ears, 5 nose,
+  6 mouth, 7 hair` (accessories/neck/cloth → background); `fdm3` — the
+  `{0 bg, 1 face, 2 hair}` protocol of Factorized Diffusion Models / DatasetDDPM (`face` =
+  skin ∪ nose ∪ eyes ∪ brows ∪ ears ∪ mouth ∪ glasses), so our numbers are comparable to
+  theirs. Overlapping raw masks are resolved to one class per pixel via the scheme's
+  `priority` order (broad regions painted first, precise features last and winning ties).
+  Run it as `python preprocess_celebamaskhq.py <scheme> [start] [end]` (scheme is
+  required — no default, since it decides which parts get merged); output for each scheme
+  goes to its own `preprocessed_data_<scheme>/` folder, so re-running never overwrites
+  another scheme's data (the original `preprocessed_data/` predates the scheme mechanism
+  and is left untouched). To add a scheme: add a `SCHEMES` entry and re-run. `dataset_config.json`'s
+  `root` selects which scheme's folder is used; `CelebAMaskHQDataset` reads `C` off the
+  stored `label.npy` rather than assuming it. `train_channels` (e.g. `[0, 1, 2]`) then
+  works exactly like the other datasets — same `label_utils.remap_sample`, applied in
+  `CelebAMaskHQDataset.__getitem__`; `num_classes` = `len(train_channels)`. The split is
+  CelebA's official train/val/test partition
   (162770/19867/19962), applied in preprocessing via the release's
   `CelebA-HQ-to-CelebA-mapping.txt`. `CelebAMaskHQ/celebamaskhq_test.ipynb` is a
   standalone visualization/sanity notebook for the preprocessed `.npy` files (not part of
   training).
+- **Non-echo generalisation datasets** (`ISIC2017`, `MontgomeryCXR`, `CHAOS`, `DrishtiGS`)
+  — added to widen the modality/organ spread for the ICLR generality claim beyond the two
+  cardiac-echo sets. All four are the plain "no anomaly" path and share one body:
+  `data_loading/npy_folder_dataset.py` (`NpyFolderDataset` — reads
+  `{root}/{mode}/{idx}/{image.npy,label.npy}`, `image.npy` is `float32 (H,W,C)` HWC in
+  `[0,1]` with `C` = 1 or 3, `label.npy` is `uint8 (K,H,W)` one-hot ch0=background;
+  `in_channels` and the raw class count are read off the first sample, not hardcoded) and
+  `data_loading/npy_folder_build.py` (`build_npy_folder_loaders` — the Camus-shaped body:
+  vanilla train/val/test `NpyFolderDataset` + `SemiSupervisedDatasetWrapper` on train).
+  Each dataset's `build_dataset.py` is a one-line call into that helper; the only thing
+  that varies is its `dataset_config.json` (`root` + `train_channels`). All resize to
+  `256×256` (bilinear image / nearest label) and scale to `[0,1]`. Registry names /
+  shapes: `isic2017` (dermoscopy/skin, RGB, 2 cls — ISIC's own train/val/test split,
+  2000/150/600), `montgomery` (chest X-ray/lung, grayscale, 2 cls — no official split, so
+  the preprocess makes a seeded 70/15/15 one), `chaos_ct` (abdominal CT/liver, grayscale,
+  2 cls — 3-D DICOM sliced per axial slice with an abdominal HU window `[-160,240]`→`[0,1]`,
+  **patient-level** seeded 70/15/15 so no slice leaks across splits; only `Train_Sets` has
+  public labels; MR/4-organ is not wired up), `drishtigs` (retinal fundus/optic disc+cup,
+  RGB, 3 nested cls {bg, disc rim, cup} — Drishti's own 51-image Test split + a seeded
+  40/10 train/val carve of its 50-image Training set). Each has a
+  `<dataset>_explore.ipynb` next to its `build_dataset.py` — a standalone raw-data
+  inspection notebook (dimensions, per-channel min/max/mean, #labels, per-label area %,
+  4-sample image|mask|overlay), not part of training.
 
 **Checkpoints/config** (`utils/file_management/`): `get_version_folder(root)` creates an
 auto-incrementing run folder (`root/index.txt` tracks the next index) — this is how

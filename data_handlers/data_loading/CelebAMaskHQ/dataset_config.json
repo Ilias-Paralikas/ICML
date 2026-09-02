@@ -1,4 +1,4 @@
 {
-    "root": "../../data/CelebAMaskHQ/preprocessed_data",
-    "train_channels": [0, 1, 2, 3, 4, 5, 6, 7]
+    "root": "../../data/CelebAMaskHQ/preprocessed_data_fdm3",
+    "train_channels": [0, 1, 2]
 }

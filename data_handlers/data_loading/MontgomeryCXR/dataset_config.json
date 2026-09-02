@@ -1,0 +1,4 @@
+{
+    "root": "../../data/MontgomeryCXR/preprocessed_data",
+    "train_channels": [0, 1]
+}

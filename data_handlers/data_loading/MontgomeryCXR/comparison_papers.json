@@ -1,0 +1,63 @@
+{
+  "dataset": "Montgomery County CXR (lung-field segmentation, chest X-ray)",
+  "primary_metrics": ["Dice (%)", "IoU (%)"],
+  "eval_note": "138 images, no official split (often reported with JSRT + Shenzhen as a 3-dataset lung-seg suite). Lung-field Dice is nearly saturated (~0.98 fully supervised), so the interesting comparison is LOW-LABEL semi-supervised. No credible fully-unsupervised lung-field baseline exists (pre-deep-learning atlas/registration methods reach ~0.94). Scores compiled from papers/abstracts - verify in source.",
+  "papers": [
+    {
+      "name": "A semi-supervised multi-connection contrastive learning framework for x-ray lung segmentation based on mutual distillation",
+      "authors": "Zeng X, Abdulla N, Liang B, Alwesabi OA, Sumari P",
+      "venue": "Medical Physics 2025; 52:e17984",
+      "link": "https://aapm.onlinelibrary.wiley.com/doi/10.1002/mp.17984",
+      "supervision": "semi-supervised (multi-connection contrastive + mutual distillation)",
+      "metric": "Dice; ResNet-50 backbone; input 128x128",
+      "model_size": "Inference/deployed model = ~1.15M-param lightweight student (4 conv layers 1->16->32->64->128 + U-Net decoder), 75.2 MB, 0.963 GFLOPs. TRAINING uses a ResNet-50 'teacher' (~25M+) + student + discriminator + projection heads (no combined total reported). The 0.96 Dice is the student result. (Our EncoderDecoder was ~133M params in the run observed.)",
+      "teacher_training": "NOT Mean-Teacher / EMA - 'teacher' is a misnomer. It's peer co-training / mutual learning: ResNet-50 model and 1.15M student trained simultaneously by gradient descent. Teacher losses: (1) supervised seg loss on the ~2 labels (sees GT directly, same as student), (2) bidirectional mutual pseudo-label / contrastive loss with the student (student teaches teacher too), (3) mid-level encoder-feature cosine consistency, (4) adversarial loss from a discriminator. Fully end-to-end, no pretraining phase. => NO hidden supervision: teacher's only GT signal is the same 2 labels; comparison is fair on the supervision axis.",
+      "pretraining": "NONE for the headline numbers - encoder is randomly initialized, trained 500 epochs from scratch. No ImageNet, no SAM/foundation model, no external labeled data. The contrastive/self-supervised stage runs only on the same dataset's own unlabeled X-rays. (An ImageNet-pretrained variant is tested as a secondary experiment but not the reported result.) Authors: 'This framework does not require any pre-training, and the labels are only for preventing model collapse'. => clean low-supervision baseline, fair to compare against.",
+      "protocol": "138 Montgomery images; label set of M images (only these have GT) + rest. NO validation set. Labeled counts M are LITERAL image counts, not fractions. Unlabeled pool = all remaining images. TEST SET = those same remaining images (transductive eval, e.g. M=2 -> 2 labeled + 136 unlabeled, tested on the 136). Same M across Montgomery/JSRT/Shenzhen. 95% CI over 20 from-scratch runs, seed 1234567. Self-contained per dataset (no cross-dataset train/test).",
+      "montgomery_dice_by_labels": {
+        "M=1": "0.9534-0.9553", "M=2": "0.9589-0.9604", "M=10": "0.9651-0.9654", "M=20": "0.9722-0.9728"
+      },
+      "also_reported": {
+        "JSRT_dice": {"2": "~0.964", "20": "~0.975"},
+        "Shenzhen_dice": {"2": "~0.953", "20": "~0.956"}
+      },
+      "fully_supervised_ceiling_in_paper": "~0.978-0.981 Dice at 80% labels",
+      "best_score": {"Dice_2_labels": 95.96, "Dice_20_labels": 97.25},
+      "why_relevant": "Extreme low-label lung segmentation on Montgomery specifically - the most direct comparison for our small-labeled-fraction setting.",
+      "caveat": "NOT directly comparable to our numbers: (a) 128x128 vs our 256x256 - low res inflates Dice on big structures like lung fields; (b) transductive eval (test images = the unlabeled training pool) vs our held-out 70/15/15 split; (c) M is a literal image count, not a fraction. Rough mapping to our 97-image Montgomery train pool: labeled_fraction ~0.02 -> ~2 labeled, ~0.10 -> ~10, ~0.21 -> ~20. Treat their Dice as an optimistic reference.",
+      "score_confidence": "verified from paper full-text (values are 95% CIs over 20 runs)"
+    },
+    {
+      "name": "Semi-supervised Multi-structure Segmentation in Chest X-Ray Imaging",
+      "venue": "2023 (CBMS / workshop)",
+      "link": "https://www.researchgate.net/publication/372428011",
+      "supervision": "semi-supervised (lung + heart + clavicle)",
+      "best_score": {"note": "verify per-structure table"},
+      "score_confidence": "not extracted - read paper"
+    },
+    {
+      "name": "Analysing the effectiveness of a generative model for semi-supervised medical image segmentation",
+      "venue": "arXiv 2022",
+      "link": "https://arxiv.org/abs/2211.01886",
+      "supervision": "semi-supervised (generative)",
+      "best_score": {"note": "check whether Montgomery/JSRT numbers are reported"},
+      "score_confidence": "not extracted - read paper"
+    },
+    {
+      "name": "Contrastive Learning with Temporal Correlated Medical Images (lung seg in CXR)",
+      "venue": "arXiv 2021",
+      "link": "https://arxiv.org/abs/2109.03233",
+      "supervision": "self-supervised pretraining + limited-label fine-tune",
+      "best_score": {"note": "verify"},
+      "score_confidence": "not extracted - read paper"
+    },
+    {
+      "name": "Automatic lung segmentation in chest X-ray images using improved U-Net",
+      "venue": "Scientific Reports 2022",
+      "link": "https://www.nature.com/articles/s41598-022-12743-y",
+      "supervision": "fully supervised (all labels)",
+      "best_score": {"Dice": "~0.98 (Montgomery lung field)"},
+      "score_confidence": "context only - upper bound"
+    }
+  ]
+}

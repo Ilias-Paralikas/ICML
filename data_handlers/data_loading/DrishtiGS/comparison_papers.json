@@ -1,0 +1,53 @@
+{
+  "dataset": "Drishti-GS1 (optic disc + optic cup segmentation, retinal fundus)",
+  "primary_metrics": ["Dice - optic disc (OD)", "Dice - optic cup (OC)", "vertical CDR error (aux.)"],
+  "eval_note": "50 train + 51 test images. OC is the hard class (small, low contrast); OD is nearly saturated. Two comparison regimes: (a) semi-supervised on Drishti's own train set, (b) unsupervised domain adaptation (train on REFUGE/RIGA/RIM-ONE, test on Drishti with NO Drishti labels). Scores compiled from papers/abstracts - verify in source.",
+  "papers": [
+    {
+      "name": "DST-Net - Dual Self-integrated Transformer Network",
+      "venue": "Electronic Research Archive (ERA) 2025",
+      "link": "https://www.aimspress.com/article/doi/10.3934/era.2025097",
+      "supervision": "semi-supervised (dual-view co-training, ViT + CNN teacher-student)",
+      "labeled_budget": "partial Drishti labels + unlabeled fundus",
+      "best_score": {"Dice_OD": 95.12, "Dice_OC": 85.69},
+      "why_relevant": "Recent, explicitly semi-supervised, evaluated on Drishti-GS1 - closest match to our setting.",
+      "score_confidence": "from abstract"
+    },
+    {
+      "name": "Joint optic disc and cup segmentation using semi-supervised conditional GANs",
+      "authors": "Kadambi, Wang, Xing",
+      "venue": "Computers in Biology and Medicine 2019",
+      "link": "https://www.sciencedirect.com/science/article/abs/pii/S0010482519303543",
+      "supervision": "semi-supervised (conditional GAN, adversarial on unlabeled)",
+      "best_score": {"note": "verify - approx Dice_OD ~0.96 / Dice_OC ~0.83 on Drishti"},
+      "score_confidence": "not extracted - read paper"
+    },
+    {
+      "name": "BEAL - Boundary and Entropy-driven Adversarial Learning",
+      "authors": "Wang et al.",
+      "venue": "MICCAI 2019",
+      "link": "https://arxiv.org/abs/1906.11143",
+      "supervision": "unsupervised domain adaptation (source labels only; 0 Drishti labels)",
+      "best_score": {"note": "verify - approx Dice_OD ~0.96 / Dice_OC ~0.86 on Drishti target"},
+      "why_relevant": "Standard 'no target labels' OD/OC baseline; comparison for the fully-unsupervised end.",
+      "score_confidence": "not extracted - read paper"
+    },
+    {
+      "name": "pOSAL - Patch-based Output Space Adversarial Learning (REFUGE winner)",
+      "authors": "Wang et al.",
+      "venue": "IEEE TMI 2019",
+      "link": "https://arxiv.org/abs/1902.07519",
+      "supervision": "unsupervised domain adaptation to Drishti / RIM-ONE",
+      "best_score": {"note": "verify per-target table"},
+      "score_confidence": "not extracted - read paper"
+    },
+    {
+      "name": "Fully-supervised reference / upper bound (e.g. MRSNet, MobileNetv3-OD/OC)",
+      "venue": "various 2022-2024",
+      "link": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11506706/",
+      "supervision": "fully supervised (all Drishti train labels)",
+      "best_score": {"Dice_OD": "~0.972-0.974", "Dice_OC": "~0.90-0.93"},
+      "score_confidence": "context only - upper bound"
+    }
+  ]
+}

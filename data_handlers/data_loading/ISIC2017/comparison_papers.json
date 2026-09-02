@@ -1,0 +1,56 @@
+{
+  "dataset": "ISIC 2017 - Part 1 (skin lesion segmentation)",
+  "primary_metrics": ["Jaccard / IoU (%)", "Dice (%)"],
+  "eval_note": "Official test set = 600 images. Semi-supervised papers train on the 2000-image training set keeping only a small labeled fraction; the rest is used unlabelled. Scores below are compiled from papers / abstracts - CHECK the exact number and labeled budget in the source before citing.",
+  "papers": [
+    {
+      "name": "TCSM / TCSM-v2 - Transformation-Consistent Self-ensembling Model",
+      "authors": "Li, Yu, Fu, Heng et al.",
+      "venue": "BMVC 2018; IEEE TNNLS 2020",
+      "link": "https://arxiv.org/abs/1903.00348",
+      "alt_link": "https://arxiv.org/abs/1808.03887",
+      "supervision": "semi-supervised (consistency / self-ensembling)",
+      "labeled_budget": "300 / 2000 (15%)",
+      "best_score": {"Jaccard": 79.8, "Dice": "~87"},
+      "why_relevant": "The canonical semi-supervised ISIC-2017 baseline - almost every later semi-sup skin-lesion paper compares to it.",
+      "score_confidence": "from abstract / secondary sources"
+    },
+    {
+      "name": "Student-teacher framework with self-training + consistency regularization",
+      "venue": "PLOS ONE 2024",
+      "link": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0300039",
+      "supervision": "semi-supervised",
+      "labeled_budget": "100 labeled",
+      "best_score": {"Jaccard (JSI)": 83.91},
+      "score_confidence": "from abstract"
+    },
+    {
+      "name": "Confidence-Weighted Semi-Supervised Learning with Hybrid CNN-Transformer",
+      "venue": "arXiv 2025",
+      "link": "https://arxiv.org/abs/2510.15354",
+      "supervision": "semi-supervised (low-label)",
+      "labeled_budget": "reports 5% / 10% / 20% settings",
+      "best_score": {"note": "verify per-split table in paper"},
+      "score_confidence": "not extracted - read paper"
+    },
+    {
+      "name": "USL-Net - Uncertainty Self-Learning Network for Unsupervised Skin Lesion Segmentation",
+      "venue": "arXiv 2023 (Medical Image Analysis)",
+      "link": "https://arxiv.org/abs/2309.13289",
+      "supervision": "unsupervised (no segmentation labels)",
+      "labeled_budget": "0",
+      "best_score": {"note": "verify - roughly IoU ~0.72 / Dice ~0.81 on ISIC-2017 from memory"},
+      "why_relevant": "Closest true fully-unsupervised skin-lesion segmentation baseline; direct comparison for the 0-label end of our method.",
+      "score_confidence": "not extracted - read paper"
+    },
+    {
+      "name": "ISIC 2017 challenge (Part 1) - fully supervised reference / upper bound",
+      "authors": "Codella et al.",
+      "venue": "ISBI 2018 challenge report",
+      "link": "https://arxiv.org/abs/1710.05006",
+      "supervision": "fully supervised (all 2000 labels)",
+      "best_score": {"Jaccard": "~0.765 (challenge winner); ~0.80 for later nnU-Net-class methods", "Dice": "~0.87"},
+      "score_confidence": "context only - upper bound"
+    }
+  ]
+}

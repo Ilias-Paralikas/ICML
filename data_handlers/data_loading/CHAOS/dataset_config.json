@@ -1,0 +1,4 @@
+{
+    "root": "../../data/CHAOS/preprocessed_data_ct",
+    "train_channels": [0, 1]
+}

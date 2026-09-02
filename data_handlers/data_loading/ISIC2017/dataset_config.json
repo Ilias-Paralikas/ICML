@@ -1,0 +1,4 @@
+{
+    "root": "../../data/ISIC2017/preprocessed_data",
+    "train_channels": [0, 1]
+}

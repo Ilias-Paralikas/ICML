@@ -1,0 +1,4 @@
+{
+    "root": "../../data/DrishtiGS/preprocessed_data",
+    "train_channels": [0, 1, 2]
+}
