@@ -64,7 +64,8 @@ There are no CLI entry points — training happens by running notebook cells top
     `LOAD_RUN` reproduces the exact dataset scenario (including how much supervision)
     the run began with, not whatever the live config says today.
   - Model / optimisation knobs (lr, `bottleneck_dim`, `vectorizers_mat_mul`, aug
-    params, loss weights, warmup) live in `train_config`; the semi-supervised split
+    params, loss weights, warmup, `reconstruction_loss`) live in `train_config`; the
+    semi-supervised split
     knobs (`labeled_fraction`, `dataset_seed`) and `batch_size`/`input_size` are set
     literally in the notebook's `dataset_config` cell, while `num_classes` and
     `in_channels` are left out of that cell on purpose and filled in from
@@ -112,10 +113,30 @@ There are no CLI entry points — training happens by running notebook cells top
   `recon_channels = self.out_channels - 1` branch in `MaskDecoder.forward`, which
   collapses the channel axis for single-channel (grayscale) reconstructions and keeps
   it for multi-channel (RGB).
-- Training combines the per-class reconstructions using the per-class segmentation
-  probabilities as soft masks (`reconstruction_loss` in `utils/losses.py`), plus a
-  supervised dice/CE loss on labeled samples (`segmentation_loss`, same module) — this
-  is what ties unsupervised reconstruction quality to segmentation quality.
+- Training combines the per-class reconstructions with the per-class segmentation
+  probabilities (`utils/losses.py`), plus a supervised dice/CE loss on labeled samples
+  (`segmentation_loss`, same module) — this is what ties unsupervised reconstruction
+  quality to segmentation quality. **There are two reconstruction terms**, selected by
+  `train_config['reconstruction_loss']` via the `RECONSTRUCTION_LOSSES` dict in the
+  notebook's losses-import cell (the training loop calls the chosen one as
+  `reconstruction_loss_fn`, so it never branches on the name):
+  - `'blend_then_square'` → `reconstruction_loss` — the original: blend the per-class
+    reconstructions with `softmax(seg)` as soft masks, then MSE vs the input,
+    `(Σₙ pₙ·rₙ − x)²`. Here `p` acts as a paint-mixing *ratio*: two wrong templates whose
+    errors cancel score perfectly, so the mask can drift into being a shading dial rather
+    than a class map, and `∂L/∂pₙ = 2(c−x)(rₙ−c)` vanishes wherever the mask has already
+    committed (i.e. over most of the image).
+  - `'square_then_blend'` → `square_then_blend_reconstruction_loss` — squares each
+    per-class error *before* blending, `Σₙ pₙ·(rₙ − x)²`. Squared errors are non-negative
+    so they cannot cancel; the term is linear in `p`, so its optimum over the simplex is a
+    hard assignment; and `∂L/∂pₙ = (rₙ−x)²` reads as "how badly does template n miss this
+    pixel" — a classification signal that stays alive on committed pixels. Same signature
+    and comparable magnitude (~1.1× on CHAOS), so `reconstruction_weight` and the warmup
+    schedule carry over unchanged.
+
+  `train_config.setdefault('reconstruction_loss', 'blend_then_square')` in that cell means
+  runs saved before this knob existed (their `config.json` has no such key) still resume
+  under `LOAD_RUN` and reproduce exactly the behaviour they were trained with.
 - Conv building blocks (`ConvBlock`, `DownConv`, `UpConv`, `ResidualDoubleConv`) live in
   `model/modules/blocks/`.
 

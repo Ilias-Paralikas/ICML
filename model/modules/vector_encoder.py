@@ -34,7 +34,7 @@ class VectorEncoder(nn.Module):
                  channels= [32, 64, 128, 256, 512, 1024],
                  bottleneck_dim=128,
                     vectorizers_mat_mul= [True,True],
-                 vectorizer_linear_layer_dim=[1024],
+                 vectorizer_linear_layer_dim=[4096],
                  number_of_vectors=4,
                  input_size=(256,256)):
         super().__init__()
